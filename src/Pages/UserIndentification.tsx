@@ -16,7 +16,7 @@ import {Button} from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
 //codigo aula 1 #missaoespacial
 //codigo aula 2 #embuscadoproximonivel
-//codigo aula 3 #
+//codigo aula 3 #astronautas
 
 const UserIndentification: React.FC = () => {
     const [isFocused, setIsFocused] = useState(false);
