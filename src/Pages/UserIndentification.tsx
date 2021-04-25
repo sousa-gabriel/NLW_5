@@ -9,11 +9,13 @@ import {
     Platform,
     TouchableWithoutFeedback,
     Keyboard,
+    Alert,
 } from 'react-native';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 import {Button} from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
+import AsncStorage from '@react-native-async-storage/async-storage'
 //codigo aula 1 #missaoespacial
 //codigo aula 2 #embuscadoproximonivel
 //codigo aula 3 #astronautas
@@ -24,8 +26,24 @@ const UserIndentification: React.FC = () => {
     const [name, setName] = useState<string>();
     const navigation = useNavigation();
 
-    function handleSubmit(){
-        navigation.navigate('Confirmation');
+    async function handleSubmit(){
+        if(!name){
+            return Alert.alert('Me diz como chamar você 😅 ?');
+        }
+        try{
+            await AsncStorage.setItem('@plantmanager:user', name);
+            navigation.navigate('Confirmation',
+                {
+                    title:'Prontinho',
+                    subTitle:'Agora vamos começar a cuidar das suas plantinhas com muito cuidado. ',
+                    buttonTitle: 'Começar',
+                    icon: 'smile',
+                    nextScreen: 'PlantSelect',
+                }
+            );
+        }catch{
+            Alert.alert('Não foi possivel salvar seu nome 😢');
+        }
     }
     function handleInputBlur(){
         setIsFocused(false);

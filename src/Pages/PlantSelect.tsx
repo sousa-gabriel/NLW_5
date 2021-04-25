@@ -5,6 +5,7 @@ import {Load} from '../components/Load';
 import {EnvironmentButton} from '../components/EnvironmentButton';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
+import { PlantsCardPrimary } from '../components/PlantsCardPrimary';
 import {
     StyleSheet, 
     View,
@@ -12,35 +13,29 @@ import {
     FlatList,
     ActivityIndicator
 } from 'react-native';
-import { PlantsCardPrimary } from '../components/PlantsCardPrimary';
+import { useNavigation } from '@react-navigation/core';
+import { PlantProps } from '../libs/storage';
 
 interface EnvironmentProps{
     key: string;
     title: string;
 }
-interface PlantsProps{
-    id: string,
-    name: string,
-    about: string,
-    water_tips: string,
-    photo: string,
-    environments: [string],
-    frequency: {
-    times: number,
-    repeat_every: string
-    }
-}
+
 const PlantSelect : React.FC = () =>{
+    const navigation = useNavigation();
     const [environment, setEnvironment] = useState<EnvironmentProps[]>([]);
-    const [plants, setPlants] = useState<PlantsProps[]>([]);
-    const [filteredplants, setFilteredPlants] = useState<PlantsProps[]>([]);
+    const [plants, setPlants] = useState<PlantProps[]>([]);
+    const [filteredplants, setFilteredPlants] = useState<PlantProps[]>([]);
     const [environmentSelected, setEnvironmentSelected] = useState('all');
     const [loading, setLoading] = useState(true);
     //iniciando a paginação dentro da minha api
     const [page, setPage] = useState(1); //verifica o numero de paginas
     const [loadingMore, setLoadingMore] = useState(false);//valida se tem mais uma pagina a ser render
-    const [loadedAll, setLoadedAll] = useState(false)//
-
+    
+    
+    function handlePlantSelect(plant:PlantProps){
+        navigation.navigate('PlantSave', plant); //passando dados pela rota
+    }
 
     function handleEnvironmentSelected(environment:string){
         setEnvironmentSelected(environment);
@@ -95,6 +90,7 @@ const PlantSelect : React.FC = () =>{
         setLoadingMore(false);
         setLoading(false);
     }
+   
     if(loading){
         return < Load/>
     }
@@ -108,6 +104,7 @@ const PlantSelect : React.FC = () =>{
             <View>
                 <FlatList
                     data={environment}
+                    keyExtractor={(item)=>String(item.key)}
                     renderItem={({item})=>(
                         <EnvironmentButton
                             title={item.title}
@@ -123,8 +120,12 @@ const PlantSelect : React.FC = () =>{
             <View style={styles.plants}>
                 <FlatList
                     data={filteredplants}
+                    keyExtractor={(item)=>String(item.id)}
                     renderItem={({item})=>(
-                        <PlantsCardPrimary data={item}/>
+                        <PlantsCardPrimary 
+                            data={item}
+                            onPress={()=>{handlePlantSelect(item)}}
+                        />
                     )}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
